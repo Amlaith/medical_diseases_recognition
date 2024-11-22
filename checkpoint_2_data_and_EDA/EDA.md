@@ -11,28 +11,37 @@
 
 ### Особенности данных
 1. Демографические характеристики.
-    - Возраст пациентов варьируется от раннего детства до пожилого, со значительной концентрацией в группе среднего возраста. Несколько значений нереалистично большие - значит, в датасете могут встречаться ошибки:    <figure>
-        <img src="https://i.ibb.co/0mcnmtB/age-distribution.png" alt="age-distribution" width="400">
-        <figcaption style="font-style: italic;">Распределение возраста пациентов</figcaption>
+    - Возраст пациентов варьируется от раннего детства до пожилого, со значительной концентрацией в группе среднего возраста. Несколько значений нереалистично большие - значит, в датасете могут встречаться ошибки: 
+    
+        <figure>
+            <img src="https://i.ibb.co/0mcnmtB/age-distribution.png" alt="age-distribution" width="400">
+            <figcaption style="font-style: italic;">Распределение возраста пациентов</figcaption>
         </figure>
     - Распределение пациентов мужского и женского пола достаточно сбалансировано:
+
         <figure>
             <img src="https://i.ibb.co/ZzbPtgg/sex-distribution.png" alt="sex-distribution" width="400">
             <figcaption style="font-style: italic;">Распределение пола пациентов</figcaption>
         </figure>
 2. Распределение целевой переменной
     - В датасете наблюдается заметный дисбаланс классов: количество изображений с выявленным заболеванием, превышает количество изображений без него. Этот дисбаланс может повлиять на качество работы модели:
+
         <figure>
             <img src="https://i.ibb.co/QvBqp6m/target-distribution.png" alt="target-distribution" width="400">
             <figcaption style="font-style: italic;">Распределение целевой переменной</figcaption>
         </figure>
 3. Bounding box'ы
     - Bounding box'ы различаются по размеру и расположению, что показывает разнообразие проявлений болезни в разных случаях:
+
+
         <figure>
             <img src="https://i.ibb.co/c1znKtJ/bbox-sizes.png" alt="bbox-sizes" width="400">
             <figcaption style="font-style: italic;">Разнообразие bounding box'ов</figcaption>
         </figure>
+
     - Некоторые изображения содержат более одного bounding box'а:
+
+
         <figure>
             <img src="https://i.ibb.co/LDTwLL8/bbox-count-distribution.png" alt="bbox-count-distribution" width="400">
             <figcaption style="font-style: italic;">Распределение количества bounding box'ов на изображениях с признаками пнемнонии</figcaption>
