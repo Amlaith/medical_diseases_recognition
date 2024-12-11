@@ -76,7 +76,7 @@ $$Win_{norm} = \frac{F1 -Prop}{1 - Prop},$$
 ![svd показательство visul](https://raw.githubusercontent.com/Amlaith/medical_diseases_recognition/refs/heads/main/checkpoint_3_baseline/md_media/components_graph_3.png)
 После неторого n, каждая новая компонента перестанет приносить новую информацию.
 
-Снижение размерности данных  1024x1024 features $\rightarrow$ 128 features, оказалось достаточным решением. Получилось получить требуемое качество по всем моделям. 
+Снижение размерности данных  1024x1024 features $\rightarrow$ 128 features, оказалось достаточным решением. Получили требуемое качество по всем моделям. 
 |Подзадачача|Снижение размерности |Размер выбоки|Win-norm (Linear)| Win-norm (Non Linear)|Gini (Linear)| Gini (Non Linear)|
 |:-|:-|:-|:-|:-|:-|:-|
 |is healthy|1024x1024 $\rightarrow$ 128|5000|0.3472|0.4298|0.4851|0.5030|
