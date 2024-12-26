@@ -18,7 +18,7 @@ Telegram: [@jdbelg](https://t.me/jdbelg)
 #### Участники
 |Участники|Telegram|Github|
 |:-|:-|:-|
-|Грицик Мария|[@Maria22032006](https://t.me/Maria22032006)|!!!|
+|Грицик Мария|[@Maria22032006](https://t.me/Maria22032006)|MariaGritsik|
 |Заваруев Иван|[@Amlaith](https://t.me/Amlaith)|Amlaith|
 |Терентьева Анастасия|[@manuls_are_cool](https://t.me/manuls_are_cool)|LovesManuls|
 
