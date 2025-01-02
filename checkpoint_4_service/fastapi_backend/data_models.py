@@ -5,6 +5,7 @@ from fastapi import HTTPException
 import numpy as np
 import pandas as pd
 
+
 class RootResponse(BaseModel):
     status: str
 
@@ -12,8 +13,10 @@ class RootResponse(BaseModel):
         json_schema_extra={"examples": [{"status": "App is running"}]}
     )
 
+
 class TrainResults(BaseModel):
     model: Any
+
 
 class ModelScores(BaseModel):
     class Config:
@@ -25,15 +28,16 @@ class ModelScores(BaseModel):
     tpr: list
     roc_auc: float
 
+
 class MLModelStorage(BaseModel):
     models: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
 
     class Config:
         arbitrary_types_allowed = True
-    
+
     def add_model(
-            self, 
-            model_name: str, 
+            self,
+            model_name: str,
             model_instance: Any,
             accuracy: float,
             f2: float,
@@ -65,7 +69,7 @@ class MLModelStorage(BaseModel):
             raise KeyError(f"Model '{model_name}' not found.")
         model = self.models.get(model_name).get('model')
         return model
-    
+
     def get_model_params(self, model_name: str) -> Any:
         """Retrieves parameters of a model from the storage."""
         if model_name not in self.models.keys():
@@ -73,14 +77,14 @@ class MLModelStorage(BaseModel):
         model = self.models.get(model_name).get('model')
         params = model.get_params() if hasattr(model, "get_params") else "Parameters not available"
         return params
-    
+
     def get_model_scores(self, model_name: str) -> ModelScores:
         """Retrieves a model scores from the storage."""
         if model_name not in self.models.keys():
             raise KeyError(f"Model '{model_name}' not found.")
         cur_model = self.models[model_name]
         return ModelScores(**cur_model['scores'])
-    
+
     def remove_model(self, model_name: str):
         """Removes a model from the storage"""
         if model_name not in self.models.keys:
@@ -88,8 +92,6 @@ class MLModelStorage(BaseModel):
         self.models.pop(model_name)
         return list(self.models.keys())
 
-
-    
 
 class DatasetStorage(BaseModel):
     datasets: Dict[str, Dict[str, np.ndarray]] = Field(default_factory=dict)
@@ -113,7 +115,7 @@ class DatasetStorage(BaseModel):
     def list_datasets(self) -> List[str]:
         """Lists all stored datasets."""
         return list(self.datasets.keys())
-    
+
 # def create_dataset_enum(dataset_storage: DatasetStorage) -> Enum:
 #     """Dynamically generate an Enum for dataset names."""
 #     datasets = dataset_storage.list_datasets()

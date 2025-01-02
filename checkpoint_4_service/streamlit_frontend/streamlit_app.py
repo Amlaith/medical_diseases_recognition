@@ -19,16 +19,18 @@ NEW_YEAR_EDITION = True  # Snow or Ballons
 
 
 st.set_page_config(
-    page_title="Pneumonia recognition", 
-    page_icon=":material/pulmonology:", 
-    # layout="wide", 
+    page_title="Pneumonia recognition",
+    page_icon=":material/pulmonology:",
+    # layout="wide",
 )
+
 
 # General functions section
 async def make_get_request(url: str):
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         return response
+
 
 async def get_list_options(what: str = "models") -> List:
     """
@@ -50,9 +52,11 @@ async def get_list_options(what: str = "models") -> List:
     response = response.json()
     return response[what]
 
+
 def get_model_by_name():
     """Get from backend model"""
     pass
+
 
 def success_effect():
     if NEW_YEAR_EDITION:
@@ -60,10 +64,12 @@ def success_effect():
     else:
         st.balloons()
 
+
 def calc_gini():
     roc_auc_metric = 0.9
     gini = 2 * roc_auc_metric - 1
     return gini
+
 
 # Plot functions section
 def conf_mat_plot(model, X_test, y_test):
@@ -72,15 +78,31 @@ def conf_mat_plot(model, X_test, y_test):
     LABELS = ["Healthy", "Not Healthy"]
     ax[0].set_title("По кол-ву объектов")
     ax[1].set_title("Нормировка по распространённостям класса")
-    disp_1 = ConfusionMatrixDisplay.from_estimator(model, X_test, y_test, display_labels=LABELS, cmap="crest", ax=ax[0])
+    disp_1 = ConfusionMatrixDisplay.from_estimator(
+        model,
+        X_test,
+        y_test,
+        display_labels=LABELS,
+        cmap="crest",
+        ax=ax[0]
+        )
     disp_1.im_.set_clim(0)
-    disp_2 = ConfusionMatrixDisplay.from_estimator(model, X_test, y_test, display_labels=LABELS, cmap="crest", normalize="true", ax=ax[1]);
+    disp_2 = ConfusionMatrixDisplay.from_estimator(
+        model,
+        X_test,
+        y_test,
+        display_labels=LABELS,
+        cmap="crest",
+        normalize="true",
+        ax=ax[1]
+        )
     disp_2.im_.set_clim(0)
 
 
 def roc_det_plot(classifiers: List[Tuple]):
     """interactive"""
     pass
+
 
 def start_page():
     """Start Page"""
@@ -102,6 +124,7 @@ def start_page():
         st.page_link(upload_page_object, label='Эксперименты', icon=":material/biotech:")
         st.write("Здесь можно загружать датасеты, обучать на них новые модели и сравнивать результаты")
 
+
 def predict_page():
     """Get Predictions Page"""
     st.title("Получение предсказаний на одной картинке")
@@ -118,7 +141,7 @@ def predict_page():
     model_options = asyncio.run(get_list_options("models"))
     model_option = st.selectbox(
         "Выберите модель, которая будет предсказывать", model_options, label_visibility="collapsed")
-    
+
     st.caption("Загрузите изображение:")
     file = st.file_uploader(
         label="Загрузить изображение",
@@ -142,13 +165,14 @@ def predict_page():
                 st.divider()
                 st.markdown("#### Результат")
                 success_effect()
-                
+
                 col1, col2 = st.columns([2, 1])
                 with col1:
                     response = response.json()
                     verdict = response["result"][0]
-                    success_text = f"{'Обнаружены признаки пневмонии' if verdict else 'Признаков пневмонии не обнаружено'}"
-                    st.success(success_text)
+                    st.success(
+                        f"{'Обнаружены признаки пневмонии' if verdict else 'Признаков пневмонии не обнаружено'}"
+                        )
 
                     st.caption("Имя модели:")
                     st.code(response["model_name"], wrap_lines=True)
@@ -167,13 +191,14 @@ def predict_page():
     demo_picture_url = f"{EXTERNAL_URL}demo_picture"
     st.link_button("Скачать случайную демо-картинку", demo_picture_url)
 
+
 def run_ex_page():
     """Run Experiments Page"""
     st.title("Модели и Датасеты")
     st.divider()
-    
+
     multi = """#### Загрузка датасетов
-    Архив должен содержать: 
+    Архив должен содержать:
     1. Изображения в допустимых форматах: png, jpg, jpeg
     2. labels.csv
     """
@@ -181,9 +206,9 @@ def run_ex_page():
 
     st.caption("Введите имя вашего датасета")
     dataset_name = st.text_input(
-        label="dataset", 
-        value="My Dataset", 
-        max_chars=50, 
+        label="dataset",
+        value="My Dataset",
+        max_chars=50,
         label_visibility="collapsed"
     )
     dataset_name = dataset_name.strip()
@@ -194,7 +219,7 @@ def run_ex_page():
         type=["zip", "x-zip-compressed"],
         label_visibility="collapsed",
     )
-    
+
     if st.button("Отправить на загрузку", type="primary"):
         curr_ds = asyncio.run(get_list_options("datasets"))
         if dataset_file is None:
@@ -209,8 +234,8 @@ def run_ex_page():
             files = {
                 "file": dataset_file
             }
-            # response = httpx.post(url, data=data, files=files, timeout=30.0)  # , files=files
-            response = httpx.post(url, files=files, params={"dataset_name": dataset_name}, timeout=30.0)  # , files=files
+            # response = httpx.post(url, data=data, files=files, timeout=30.0)
+            response = httpx.post(url, files=files, params={"dataset_name": dataset_name}, timeout=30.0)
             if response.status_code == 200:
                 success_effect()
                 text = response.json()["message"]
@@ -219,19 +244,18 @@ def run_ex_page():
                 response = response.json()
                 exp = ValueError(f"{response}")
                 st.exception(exp)
-    
+
     st.write(":grey[Если у вас нет подходящего датасета, можно скачать готовый демо-датасет:]")
     # demo_dataset_url = f"{BASE_URL}demo_dataset"
     demo_dataset_url = f"{EXTERNAL_URL}demo_dataset"
     st.link_button("Скачать демо-датасет", demo_dataset_url)
-    
+
     st.divider()
     st.markdown("#### Список доступных датасетов")
 
     dataset_options = asyncio.run(get_list_options("datasets"))
-  
-    st.write(pd.DataFrame(dataset_options, columns=["Загруженные датасеты"]))
 
+    st.write(pd.DataFrame(dataset_options, columns=["Загруженные датасеты"]))
 
     st.divider()
 
@@ -240,9 +264,9 @@ def run_ex_page():
 
         st.caption("Введите имя вашей модели")
         model_name = st.text_input(
-            label="model_name", 
-            value="My Model", 
-            max_chars=50, 
+            label="model_name",
+            value="My Model",
+            max_chars=50,
             label_visibility="collapsed"
         )
 
@@ -250,8 +274,8 @@ def run_ex_page():
         n_estimators = st.number_input(
             label="n_estimators",
             min_value=1,
-            step=1, 
-            value=100, 
+            step=1,
+            value=100,
             label_visibility="collapsed"
         )
 
@@ -259,8 +283,8 @@ def run_ex_page():
         max_depth = st.number_input(
             label="max_depth",
             # min_value=1,
-            step=1, 
-            value=100, 
+            step=1,
+            value=100,
             label_visibility="collapsed"
         )
 
@@ -268,8 +292,8 @@ def run_ex_page():
         rs = st.number_input(
             label="random_state",
             # min_value=1,
-            step=1, 
-            value=74, 
+            step=1,
+            value=74,
             label_visibility="collapsed"
         )
 
@@ -295,9 +319,9 @@ def run_ex_page():
             else:
                 url = BASE_URL + "add_model"
                 payload = {
-                    'model_name': model_name, 
-                    'n_estimators': n_estimators, 
-                    'max_depth': max_depth, 
+                    'model_name': model_name,
+                    'n_estimators': n_estimators,
+                    'max_depth': max_depth,
                     'random_state': rs,
                     'dataset_name': dataset_option
                     }
@@ -322,7 +346,7 @@ def run_ex_page():
     st.markdown("#### Список доступных моделей")
 
     dataset_options = asyncio.run(get_list_options("models"))
-  
+
     st.write(pd.DataFrame(dataset_options, columns=["Загруженные модели"]))
 
 
@@ -372,7 +396,12 @@ def compare_page():
     st.subheader("ROC-кривые")
     fig, ax = plt.subplots(figsize=(10, 8))
     for model_name, metrics in model_metrics.items():
-        RocCurveDisplay(fpr=metrics["fpr"], tpr=metrics["tpr"], roc_auc=metrics["roc_auc"], estimator_name=model_name).plot(ax=ax)
+        RocCurveDisplay(
+            fpr=metrics["fpr"],
+            tpr=metrics["tpr"],
+            roc_auc=metrics["roc_auc"],
+            estimator_name=model_name
+            ).plot(ax=ax)
     ax.set_title("Сравнение ROC-кривых всех моделей")
     ax.legend(loc="lower right")
     st.pyplot(fig)
@@ -381,11 +410,11 @@ def compare_page():
     st.dataframe(metrics_df)
 
 
-
 def eda_page():
     """Run EDA Page"""
     eda_markdown = Path('EDA.md').read_text(encoding='utf-8')
     st.markdown(eda_markdown, unsafe_allow_html=True)
+
 
 def deep_page():
     """Run Experiments Page"""
@@ -409,7 +438,6 @@ def deep_page():
         st.error(f"An error occurred: {e}")
 
 
-
 start_page_object = st.Page(start_page, title="Начало")
 predict_page_object = st.Page(predict_page, title="Получение предсказаний")
 eda_page_object = st.Page(eda_page, title="Разведочный анализ данных")
@@ -422,10 +450,10 @@ pg = st.navigation({
     "": [
         start_page_object,
     ],
-    "Инференс" : [
+    "Инференс": [
         predict_page_object,
     ],
-    "Аналитика" : [
+    "Аналитика": [
         eda_page_object
     ],
     "Эксперименты": [

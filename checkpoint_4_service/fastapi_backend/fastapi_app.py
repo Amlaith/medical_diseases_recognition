@@ -20,6 +20,7 @@ PRETRAINED_MODEL_PATH = "models/RF_model.pkl"
 model_storage = MLModelStorage()
 dataset_storage = DatasetStorage()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not os.path.exists(TEMP_DIR):
@@ -38,7 +39,6 @@ async def lifespan(app: FastAPI):
             *scores
             )
 
-    
     yield
 
     shutil.rmtree(TEMP_DIR, ignore_errors=True)
@@ -46,20 +46,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Pneumonia Detection", lifespan=lifespan)
 
+
 @app.get("/", tags=["Root"])
 def root() -> RootResponse:
     """Root of the app"""
     return {"status": "App is running"}
+
 
 @app.get("/list_models", tags=["Models"])
 def list_models() -> Dict[str, List[str]]:
     """List all stored models"""
     return {"models": model_storage.list_models()}
 
+
 @app.get("/list_datasets", tags=["Datasets"])
 def list_datasets() -> Dict[str, List[str]]:
     """List all stored datasets"""
     return {"datasets": dataset_storage.list_datasets()}
+
 
 @app.post("/predict", tags=["Prediction"])
 def predict(file: UploadFile = File(...), model_name: str = "Pretrained RandomForest") -> Dict[str, Any]:
@@ -97,7 +101,8 @@ def predict(file: UploadFile = File(...), model_name: str = "Pretrained RandomFo
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-    
+
+
 @app.post("/add_dataset", tags=["Datasets"])
 def upload_dataset(file: UploadFile = File(...), dataset_name: str = "My Dataset") -> Dict[str, str]:
     """Endpoint to upload a zip dataset and store it in dataset storage"""
@@ -158,6 +163,7 @@ def upload_dataset(file: UploadFile = File(...), dataset_name: str = "My Dataset
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
 @app.get("/demo_dataset", tags=["Datasets"])
 def get_demo_dataset() -> FileResponse:
     """Serve a pre-built demo dataset."""
@@ -166,6 +172,7 @@ def get_demo_dataset() -> FileResponse:
         return FileResponse(demo_file_path, media_type="application/zip", filename="demo_dataset.zip")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 
 @app.get("/demo_picture", tags=["Prediction"])
 def get_demo_dataset() -> FileResponse:
@@ -176,33 +183,41 @@ def get_demo_dataset() -> FileResponse:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
 @app.post("/add_model", tags=["Models"])
 def add_model(
-        model_name: str = "My Model", 
-        n_estimators: int = 100, 
-        max_depth: int = None, 
+        model_name: str = "My Model",
+        n_estimators: int = 100,
+        max_depth: int = None,
         random_state: int = 74,
         dataset_name: str = 'Default Dataset'
-    ) -> Dict[str, str]:
+        ) -> Dict[str, str]:
     """Endpoint to add a RandomForest model to the model storage"""
     try:
         # Create RandomForest model
-        model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=random_state, n_jobs=-1)
+        model = RandomForestClassifier(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            random_state=random_state,
+            n_jobs=-1
+            )
         dataset = dataset_storage.get_dataset(dataset_name)
-        model, acc_score, f2_score, fpr, tpr, roc_auc  = get_scores(model, dataset)
+        model, acc_score, f2_score, fpr, tpr, roc_auc = get_scores(model, dataset)
         # Add the model to storage
         model_storage.add_model(model_name, model, acc_score, f2_score, fpr, tpr, roc_auc)
-    
+
         return {"message": f"Model '{model_name}' trained and added successfully."}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
 @app.get("/model_scores", tags=["Models"])
 def get_model_scores(model_name: str = "Pretrained RandomForest") -> ModelScores:
     """Get model scores from the storage."""
     return model_storage.get_model_scores(model_name)
+
 
 @app.get("/model_params", tags=["Models"])
 def get_model_params(model_name: str = "Pretrained RandomForest") -> Dict[str, Any]:
@@ -213,6 +228,7 @@ def get_model_params(model_name: str = "Pretrained RandomForest") -> Dict[str, A
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 
 if __name__ == "__main__":
     uvicorn.run("fastapi_app:app", host="localhost", port=8000, reload=True)
