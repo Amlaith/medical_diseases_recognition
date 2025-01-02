@@ -1,0 +1,23 @@
+services:
+  fastapi_backend:
+    build:
+      context: ./fastapi_backend
+    container_name: fastapi_backend
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://fastapi_backend:8000/docs')"]
+      interval: 31s
+      timeout: 30s
+      retries: 4
+      start_period: 15s
+
+  streamlit_frontend:
+    build:
+      context: ./streamlit_frontend
+    container_name: streamlit_frontend
+    depends_on:
+      fastapi_backend:
+        condition: service_healthy
+    ports:
+      - "8501:8501"

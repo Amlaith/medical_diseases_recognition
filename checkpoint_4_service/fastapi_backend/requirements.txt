@@ -1,0 +1,13 @@
+fastapi==0.115.6
+gdown==5.2.0
+matplotlib==3.10.0
+numpy==2.2.1
+opencv-python-headless
+pandas==2.2.3
+pydantic==2.10.4
+pydicom==3.0.1
+scikit_learn==1.5.2
+scikit-image==0.25.0
+tqdm==4.67.1
+uvicorn==0.34.0
+python-multipart
