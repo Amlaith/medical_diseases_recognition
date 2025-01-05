@@ -166,3 +166,5 @@ stage_2_train_images/
 stage_2_test_images_jpg/
 stage_2_train_images_jpg/
 
+prepared_dataset/
+prepared_dataset.zip
